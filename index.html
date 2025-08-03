@@ -158,6 +158,10 @@
     </form>
     <div id="successMessage" class="success-message">
       Thank you! Your appointment request has been submitted. We'll contact you soon.
+      <br><br>
+      <button id="whatsappButton" onclick="openWhatsApp()" style="background: #25D366; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+        📱 Open WhatsApp
+      </button>
     </div>
   </section>
 
@@ -179,19 +183,43 @@
       const phone = formData.get('phone');
       const message = formData.get('message');
       
-      // You can add your own logic here:
-      // 1. Send to your email
-      // 2. Save to database
-      // 3. Send to WhatsApp
-      
-      // For now, just show success message
+      // Show success message
       document.getElementById('successMessage').style.display = 'block';
       event.target.reset();
       
-      // Optional: Send to WhatsApp
+      // Create WhatsApp message
       const whatsappMessage = `New Appointment Request:%0A%0AName: ${name}%0APhone: ${phone}%0AMessage: ${message}`;
-      // You can redirect to WhatsApp with this message
-       window.open(`https://wa.me/9869921403?text=${whatsappMessage}`, '_blank');
+      const whatsappUrl = `https://wa.me/9869921403?text=${whatsappMessage}`;
+      
+      // Try to open WhatsApp
+      try {
+        const newWindow = window.open(whatsappUrl, '_blank');
+        if (newWindow) {
+          console.log('WhatsApp window opened successfully');
+        } else {
+          console.log('Popup blocked - trying alternative method');
+          // Alternative method: create a link and click it
+          const link = document.createElement('a');
+          link.href = whatsappUrl;
+          link.target = '_blank';
+          link.click();
+        }
+      } catch (error) {
+        console.error('Error opening WhatsApp:', error);
+        // Fallback: show the URL to copy
+        alert('Please copy this link and open it manually: ' + whatsappUrl);
+      }
+    }
+    
+    function openWhatsApp() {
+      const name = document.querySelector('input[name="name"]').value || 'Patient';
+      const phone = document.querySelector('input[name="phone"]').value || 'Not provided';
+      const message = document.querySelector('textarea[name="message"]').value || 'Appointment request';
+      
+      const whatsappMessage = `New Appointment Request:%0A%0AName: ${name}%0APhone: ${phone}%0AMessage: ${message}`;
+      const whatsappUrl = `https://wa.me/9869921403?text=${whatsappMessage}`;
+      
+      window.open(whatsappUrl, '_blank');
     }
   </script>
 </body>
